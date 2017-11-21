@@ -25,28 +25,29 @@ namespace Assets.MatchThreeUnity.Scripts.Tiles
 
 		private void Update()
 		{
+			if (Input.GetMouseButton(0))
+			{
+				Vector3 clickPosition = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z));
+				clickPosition.z = transform.position.z;
+				positions[1] = clickPosition;
+				lineRenderer.SetPositions(positions);
+			}
+
 			if (Input.GetMouseButtonDown(0))
 			{
 				downCoordinates = Input.mousePosition;
 				Vector3 clickPosition = Camera.main.ScreenToWorldPoint(new Vector3(downCoordinates.x, downCoordinates.y, -Camera.main.transform.position.z));
 				var hit = Physics2D.OverlapBox(clickPosition, new Vector2(0.1f, 0.1f), 0, LayerMask.GetMask("Tiles"));
-				clickPosition.z = -1;
+				clickPosition.z = transform.position.z;
 				positions[0] = clickPosition;
-				lineRenderer.enabled = true;
 				firstTile = null;
 				Tile hitTile = hit?.GetComponent<Tile>();
 
 				if (hitTile == null || hitTile.IsFalling)
 					return;
 
+				lineRenderer.enabled = true;
 				firstTile = hitTile;
-			}
-
-			if (Input.GetMouseButton(0))
-			{
-				Vector3 clickPosition = Camera.main.ScreenToWorldPoint(new Vector3(downCoordinates.x, downCoordinates.y, -Camera.main.transform.position.z - 1));
-				positions[1] = clickPosition;
-				lineRenderer.SetPositions(positions);
 			}
 
 			if (Input.GetMouseButtonUp(0))
@@ -90,6 +91,7 @@ namespace Assets.MatchThreeUnity.Scripts.Tiles
 				secondTile.transform.position = cachedPosition;
 				firstTile = null;
 			}
+			
 		}
 
 	}
